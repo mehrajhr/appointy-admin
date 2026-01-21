@@ -3,6 +3,7 @@ import { DoctorContext } from './context/DoctorContext'
 import { Route, Routes, Navigate, useLocation } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { AdminContext } from './context/AdminContext'
 
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
@@ -11,14 +12,22 @@ import DoctorAppointments from './pages/Doctor/DoctorAppointments'
 import DoctorDashboard from './pages/Doctor/DoctorDashboard'
 import DoctorProfile from './pages/Doctor/DoctorProfile'
 
+import Dashboard from './pages/Admin/Dashboard'
+import AllAppointments from './pages/Admin/AllAppointments'
+import AddDoctor from './pages/Admin/AddDoctor'
+import DoctorsList from './pages/Admin/DoctorsList'
+import Login from './pages/Login'
 const App = () => {
     const { dToken } = useContext(DoctorContext)
     const location = useLocation()
+    const { aToken } = useContext(AdminContext)
 
     // Redirect "/" to the proper dashboard
     if (location.pathname === '/') {
     if (dToken) return <Navigate to="/doctor-dashboard" replace />
-
+    if (aToken) return <Navigate to="/admin-dashboard" replace />
+    
+  
   }
   
   // Doctor layout and routes
@@ -40,6 +49,38 @@ const App = () => {
     )
   }
 
+  // Admin layout and routes
+  if (aToken) {
+    return (
+      <div className='bg-[#F8F9FD]'>
+        <ToastContainer />
+        <Navbar />
+        <div className='flex items-start'>
+          <Sidebar />
+          <Routes>
+            <Route path="/admin-dashboard" element={<Dashboard />} />
+            <Route path="/all-appointments" element={<AllAppointments />} />
+            <Route path="/add-doctor" element={<AddDoctor />} />
+            <Route path="/doctor-list" element={<DoctorsList />} />
+            <Route path="*" element={<Navigate to="/admin-dashboard" />} />
+          </Routes>
+        </div>
+      </div>
+    )
+  }
+
+  
+
+  // No one is logged in
+  return (
+    <>
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </>
+  )
 
 }
 
